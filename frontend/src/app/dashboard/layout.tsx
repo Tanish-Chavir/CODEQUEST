@@ -33,19 +33,19 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar Navigation */}
-      <aside className="w-64 border-r border-border bg-card/50 flex flex-col">
-        <div className="h-16 flex items-center px-6 border-b border-border">
+      <aside className="group w-20 hover:w-64 transition-all duration-300 ease-in-out border-r border-border bg-card/50 flex flex-col overflow-hidden relative z-50">
+        <div className="h-16 flex items-center px-6 border-b border-border shrink-0">
           <Link href="/" className="flex items-center gap-2">
-            <Code className="w-6 h-6 text-primary" />
-            <span className="font-bold text-lg tracking-tight">CodeQuest</span>
+            <Code className="w-6 h-6 text-primary shrink-0" />
+            <span className="font-bold text-lg tracking-tight opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">CodeQuest</span>
           </Link>
         </div>
 
         {/* User XP Badge */}
         {user && (
-          <div className="mx-4 mt-4 p-3 rounded-xl bg-primary/10 border border-primary/20">
+          <div className="mx-4 mt-4 p-3 rounded-xl bg-primary/10 border border-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
             <div className="flex items-center gap-2 mb-1">
-              <Star className="w-4 h-4 text-yellow-500" />
+              <Star className="w-4 h-4 text-yellow-500 shrink-0" />
               <span className="text-xs font-bold text-primary">Level {user.level}</span>
             </div>
             <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden">
@@ -58,27 +58,27 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         )}
         
-        <div className="flex-1 py-6 px-4 space-y-1">
-          <NavLink href="/dashboard"            icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard"    active={pathname === "/dashboard"} />
-          <NavLink href="/dashboard/courses"    icon={<Library        className="w-5 h-5" />} label="My Courses"   active={pathname?.startsWith("/dashboard/courses")} />
-          <NavLink href="/dashboard/games"      icon={<Gamepad2       className="w-5 h-5" />} label="Game Zone 🎮" active={pathname?.startsWith("/dashboard/games")} />
-          <NavLink href="/dashboard/leaderboard"icon={<Trophy         className="w-5 h-5" />} label="Leaderboard"  active={pathname?.startsWith("/dashboard/leaderboard")} />
+        <div className="flex-1 py-6 px-4 space-y-2">
+          <NavLink href="/dashboard"            icon={<LayoutDashboard className="w-6 h-6 shrink-0" />} label="Dashboard"    active={pathname === "/dashboard"} />
+          <NavLink href="/dashboard/courses"    icon={<Library        className="w-6 h-6 shrink-0" />} label="My Courses"   active={pathname?.startsWith("/dashboard/courses")} />
+          <NavLink href="/dashboard/games"      icon={<Gamepad2       className="w-6 h-6 shrink-0" />} label="Game Zone 🎮" active={pathname?.startsWith("/dashboard/games")} />
+          <NavLink href="/dashboard/leaderboard"icon={<Trophy         className="w-6 h-6 shrink-0" />} label="Leaderboard"  active={pathname?.startsWith("/dashboard/leaderboard")} />
 
-          <div className="pt-3 pb-1">
+          <div className="pt-3 pb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 mb-1">Account</p>
           </div>
-          <NavLink href="/dashboard/settings"   icon={<Settings       className="w-5 h-5" />} label="Settings"     active={pathname === "/dashboard/settings"} />
-          <NavLink href="/dashboard/admin"      icon={<ShieldCheck    className="w-5 h-5" />} label="Admin Panel"  active={pathname?.startsWith("/dashboard/admin")} />
+          <NavLink href="/dashboard/settings"   icon={<Settings       className="w-6 h-6 shrink-0" />} label="Settings"     active={pathname === "/dashboard/settings"} />
+          <NavLink href="/dashboard/admin"      icon={<ShieldCheck    className="w-6 h-6 shrink-0" />} label="Admin Panel"  active={pathname?.startsWith("/dashboard/admin")} />
         </div>
 
         {/* User info + Logout */}
         <div className="p-4 border-t border-border space-y-3">
           {user && (
-            <div className="flex items-center gap-3 px-3 py-2">
-              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-xl shrink-0">
+            <div className="flex items-center gap-3 px-2 py-2">
+              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-xl shrink-0">
                 {user.avatar || user.username?.charAt(0).toUpperCase()}
               </div>
-              <div className="overflow-hidden">
+              <div className="overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                 <p className="text-sm font-bold truncate">{user.username}</p>
                 <p className="text-xs text-muted-foreground truncate">{user.email}</p>
               </div>
@@ -86,10 +86,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           )}
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2 w-full rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+            className="flex items-center gap-3 px-2 py-2 w-full rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all overflow-hidden whitespace-nowrap"
           >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium text-sm">Log out</span>
+            <LogOut className="w-6 h-6 shrink-0" />
+            <span className="font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">Log out</span>
           </button>
         </div>
       </aside>
@@ -108,14 +108,14 @@ function NavLink({ href, icon, label, active }: { href: string, icon: ReactNode,
   return (
     <Link 
       href={href} 
-      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+      className={`flex items-center gap-3 px-2 py-2.5 rounded-lg transition-all overflow-hidden whitespace-nowrap ${
         active 
           ? "bg-primary/10 text-primary font-semibold border border-primary/20" 
           : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
       }`}
     >
       {icon}
-      <span className="font-medium text-sm">{label}</span>
+      <span className="font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">{label}</span>
     </Link>
   );
 }

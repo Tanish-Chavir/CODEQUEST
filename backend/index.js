@@ -8,6 +8,9 @@ dotenv.config();
 import authRoutes from "./routes/auth.js";
 import courseRoutes from "./routes/course.js";
 import aiRoutes from "./routes/ai.js";
+import advancedAiRoutes from "./routes/aiRoutes.js";
+import mlRoutes from "./routes/mlRoutes.js";
+import gameRoutes from "./routes/gameRoutes.js";
 
 const app = express();
 
@@ -25,6 +28,9 @@ mongoose
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/advanced-ai", advancedAiRoutes);
+app.use("/api/ml", mlRoutes);
+app.use("/api/games", gameRoutes);
 
 app.get("/", (req, res) => {
   res.send("CodeQuest API is running");

@@ -37,6 +37,18 @@ const userSchema = new mongoose.Schema({
   // ── Access Control ───────────────────────────────
   role: { type: String, enum: ["user", "admin"], default: "user" },
 
+  // ── Adaptive Learning ───────────────────────────
+  skills: {
+    type: Map,
+    of: new mongoose.Schema({
+      score: { type: Number, default: 0 },
+      attempts: { type: Number, default: 0 },
+      accuracy: { type: Number, default: 0 },
+      lastMistakeType: { type: String, default: null } // e.g. "logic", "syntax", "concept"
+    }, { _id: false }),
+    default: {}
+  },
+  
   courseProgress: [courseProgressSchema],
 }, { timestamps: true });
 

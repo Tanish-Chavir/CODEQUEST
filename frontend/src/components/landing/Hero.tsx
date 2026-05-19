@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring, useScroll, useTransform } from "framer-motion";
 import { Play, ChevronRight, Code, Cpu, Database, Cloud } from "lucide-react";
 
+import { StarryBackground } from "./StarryBackground";
+
 const TITLE_TEXT = "Master Code with Interactive AI";
 const DESCRIPTIONS = [
   "Turn any YouTube tutorial into an interactive course. Watch, learn, take quizzes, play games, and earn rewards along your journey.",
@@ -50,27 +52,20 @@ export function Hero({ onAuthOpen }: { onAuthOpen: () => void }) {
 
   return (
     <section className="relative min-h-[95vh] flex items-center justify-center pt-24 pb-32 px-6 overflow-hidden">
-      {/* Clean Gradient Background */}
+      {/* Starry Background Particles */}
+      <StarryBackground mouseX={springX} mouseY={springY} />
 
       {/* Floating Gradient Orbs */}
       <motion.div 
         animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[10%] left-[20%] w-[400px] h-[400px] rounded-full bg-primary/20 blur-[100px] pointer-events-none" 
+        className="absolute top-[10%] left-[20%] w-[400px] h-[400px] rounded-full bg-primary/20 blur-[100px] pointer-events-none z-0" 
       />
       <motion.div 
         animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.4, 0.2] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-[10%] right-[10%] w-[500px] h-[500px] rounded-full bg-blue-500/20 blur-[120px] pointer-events-none" 
+        className="absolute bottom-[10%] right-[10%] w-[500px] h-[500px] rounded-full bg-blue-500/20 blur-[120px] pointer-events-none z-0" 
       />
-
-      {/* Floating 3D/UI Elements */}
-      <motion.div style={{ x: springX, y: springY, opacity: heroOpacity }} className="absolute inset-0 pointer-events-none z-10">
-        <FloatingElement icon={<Code className="text-blue-400" />} top="20%" left="15%" delay={0} />
-        <FloatingElement icon={<Cpu className="text-purple-400" />} top="30%" right="20%" delay={1} />
-        <FloatingElement icon={<Database className="text-emerald-400" />} bottom="25%" left="25%" delay={2} />
-        <FloatingElement icon={<Cloud className="text-pink-400" />} bottom="35%" right="15%" delay={0.5} />
-      </motion.div>
 
       {/* Interactive Parallax Content */}
       <motion.div style={{ opacity: heroOpacity, y: heroY }} className="relative z-20 max-w-5xl mx-auto text-center space-y-10">

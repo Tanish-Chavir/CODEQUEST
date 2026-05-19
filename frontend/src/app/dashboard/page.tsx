@@ -110,7 +110,7 @@ export default function DashboardPage() {
 
       {/* XP Progress Bar */}
       {user && (
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
+        <div className="glass-card border border-white/10 rounded-2xl p-6 shadow-xl">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-primary" />
@@ -118,7 +118,7 @@ export default function DashboardPage() {
             </div>
             <span className="text-xs text-muted-foreground">{user.xp % 500} / 500 XP</span>
           </div>
-          <div className="w-full bg-secondary h-3 rounded-full overflow-hidden">
+          <div className="w-full bg-secondary/50 h-3 rounded-full overflow-hidden">
             <div
               className="bg-gradient-to-r from-primary to-purple-500 h-full rounded-full transition-all duration-1000"
               style={{ width: `${levelProgress}%` }}
@@ -129,7 +129,7 @@ export default function DashboardPage() {
       )}
 
       {/* Create Course Form */}
-      <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
+      <div className="glass-card border border-white/10 rounded-2xl p-8 shadow-xl">
         <div className="max-w-2xl">
           <h2 className="text-2xl font-bold mb-2">Create New Course</h2>
           <p className="text-muted-foreground mb-6">
@@ -145,13 +145,13 @@ export default function DashboardPage() {
                 placeholder="https://www.youtube.com/playlist?list=..."
                 value={playlistUrl}
                 onChange={(e) => setPlaylistUrl(e.target.value)}
-                className="w-full bg-background border border-input rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                className="w-full bg-background/50 backdrop-blur-md border border-white/10 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary transition-all text-foreground"
               />
             </div>
             <button 
               type="submit" 
               disabled={loading}
-              className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-medium hover:bg-primary/90 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-70 disabled:active:scale-100"
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-medium hover:bg-primary/90 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-70 disabled:active:scale-100 neon-glow"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
               {loading ? "Generating..." : "Generate Course"}
@@ -159,7 +159,7 @@ export default function DashboardPage() {
           </form>
 
           {message && (
-            <div className={`mt-4 p-4 rounded-lg text-sm font-medium ${message.startsWith('❌') ? 'bg-destructive/10 text-destructive' : 'bg-green-500/10 text-green-500'}`}>
+            <div className={`mt-4 p-4 rounded-lg text-sm font-medium ${message.startsWith('❌') ? 'bg-destructive/10 text-destructive border border-destructive/20' : 'bg-green-500/10 text-green-500 border border-green-500/20'}`}>
               {message}
             </div>
           )}
@@ -180,7 +180,7 @@ export default function DashboardPage() {
               <Link
                 key={course._id}
                 href={`/dashboard/courses/${course._id}`}
-                className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all group"
+                className="neon-border-card rounded-xl overflow-hidden hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] transition-all group"
               >
                 <div className="aspect-video bg-secondary relative overflow-hidden">
                   <img
@@ -188,13 +188,13 @@ export default function DashboardPage() {
                     alt={course.title}
                     className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <PlaySquare className="w-10 h-10 text-white" />
                   </div>
                 </div>
-                <div className="p-4">
+                <div className="p-4 bg-background/50 backdrop-blur-sm border-t border-white/5">
                   <p className="font-semibold text-sm line-clamp-2">{course.title}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Tap to resume →</p>
+                  <p className="text-xs text-primary mt-1">Tap to resume →</p>
                 </div>
               </Link>
             ))}
@@ -207,15 +207,15 @@ export default function DashboardPage() {
 
 function StatCard({ title, value, icon, accent, sub }: { title: string; value: string; icon: React.ReactNode; accent?: string; sub?: string }) {
   const accentMap: Record<string, string> = {
-    yellow: "bg-yellow-500/10",
-    primary: "bg-primary/10",
-    blue: "bg-blue-500/10",
-    green: "bg-green-500/10",
+    yellow: "bg-yellow-500/10 text-yellow-500",
+    primary: "bg-primary/10 text-primary",
+    blue: "bg-blue-500/10 text-blue-500",
+    green: "bg-green-500/10 text-green-500",
   };
-  const bg = accentMap[accent ?? "primary"] ?? "bg-secondary";
+  const bg = accentMap[accent ?? "primary"] ?? "bg-secondary text-foreground";
 
   return (
-    <div className="bg-card border border-border p-5 rounded-2xl shadow-sm flex items-center justify-between hover:shadow-md transition-all">
+    <div className="glass-card border border-white/10 p-5 rounded-2xl shadow-xl flex items-center justify-between hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] hover:border-primary/30 transition-all">
       <div>
         <p className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wide">{title}</p>
         <p className="text-2xl font-bold">{value}</p>
