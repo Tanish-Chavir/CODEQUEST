@@ -1,0 +1,37 @@
+services:
+  # -------------------------------------------------------------
+  # 1. Backend Express Web Service
+  # -------------------------------------------------------------
+  - type: web
+    name: codequest-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        sync: false
+        placeholder: "Your MongoDB connection string (e.g. MongoDB Atlas free tier URI)"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+        placeholder: "Your Gemini API Key (AI generator engine)"
+
+  # -------------------------------------------------------------
+  # 2. Frontend Next.js Web Service
+  # -------------------------------------------------------------
+  - type: web
+    name: codequest-frontend
+    env: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+        placeholder: "Live URL of your codequest-backend (e.g. https://codequest-backend.onrender.com/api)"
