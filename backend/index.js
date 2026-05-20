@@ -11,6 +11,7 @@ import aiRoutes from "./routes/ai.js";
 import advancedAiRoutes from "./routes/aiRoutes.js";
 import mlRoutes from "./routes/mlRoutes.js";
 import gameRoutes from "./routes/gameRoutes.js";
+import healthRoutes from "./routes/health.js";
 
 const app = express();
 
@@ -25,6 +26,7 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log("DB Connection Error:", err));
 
+app.use("/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/ai", aiRoutes);
