@@ -9,7 +9,9 @@ const courseProgressSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email:    { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: false },
+  otp:      { type: String, default: null },
+  otpExpires: { type: Date, default: null },
 
   // ── Personal Info ────────────────────────────────
   fullName:  { type: String, default: "" },
@@ -17,6 +19,7 @@ const userSchema = new mongoose.Schema({
   bio:       { type: String, default: "" },
   country:   { type: String, default: "" },
   avatar:    { type: String, default: "" }, // URL or emoji
+  techSkills: { type: [String], default: [] },
 
   // ── Gamification ────────────────────────────────
   xp:     { type: Number, default: 0 },
@@ -49,6 +52,15 @@ const userSchema = new mongoose.Schema({
     default: {}
   },
   
+  // ── Daily Learning Reminder ───────────────────────
+  reminderEnabled: { type: Boolean, default: false },
+  reminderTime:    { type: String, default: "09:00" }, // stored as "HH:MM" 24h format
+  fcmTokens:       [{ type: String }],
+  githubToken:     { type: String, default: "" },
+  githubUsername:  { type: String, default: "" },
+  followers:       [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  following:       [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
   courseProgress: [courseProgressSchema],
 }, { timestamps: true });
 

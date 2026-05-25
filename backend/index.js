@@ -12,6 +12,10 @@ import advancedAiRoutes from "./routes/aiRoutes.js";
 import mlRoutes from "./routes/mlRoutes.js";
 import gameRoutes from "./routes/gameRoutes.js";
 import healthRoutes from "./routes/health.js";
+import notificationRoutes from "./routes/notifications.js";
+import activityRoutes from "./routes/activity.js";
+import projectRoutes from "./routes/projectRoutes.js";
+import { initScheduler } from "./services/schedulerService.js";
 
 const app = express();
 
@@ -23,7 +27,10 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/codequest"
 
 mongoose
   .connect(MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
+  .then(() => {
+    console.log("MongoDB Connected");
+    initScheduler();
+  })
   .catch((err) => console.log("DB Connection Error:", err));
 
 app.use("/health", healthRoutes);
@@ -33,6 +40,9 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/advanced-ai", advancedAiRoutes);
 app.use("/api/ml", mlRoutes);
 app.use("/api/games", gameRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/activity", activityRoutes);
+app.use("/api/projects", projectRoutes);
 
 app.get("/", (req, res) => {
   res.send("CodeQuest API is running");

@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { fetchWithAuth } from "@/lib/api";
 import {
   User, Lock, Moon, Sun, Save, Phone, MapPin, FileText,
-  Loader2, CheckCircle, Eye, EyeOff, Smile
+  Loader2, CheckCircle, Eye, EyeOff, Smile, Bell
 } from "lucide-react";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 const AVATAR_EMOJIS = ["🧑‍💻","👨‍💻","👩‍💻","🦸","🧙","🐉","🦊","🐺","🤖","👾","🐱","🦁"];
 
@@ -19,6 +20,11 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState({ text: "", ok: true });
+
+  const { permission, requestNotificationPermission, triggerSimulation } = usePushNotifications();
+  const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [reminderTime, setReminderTime] = useState("09:00");
+  const [reminderSaving, setReminderSaving] = useState(false);
 
   const [profile, setProfile] = useState({
     username: "", fullName: "", email: "",
@@ -44,6 +50,8 @@ export default function SettingsPage() {
         avatar:    u.avatar    || "🧑‍💻",
       });
       setTheme(u.theme || "dark");
+      setReminderEnabled(u.reminderEnabled || false);
+      setReminderTime(u.reminderTime || "09:00");
     }).finally(() => setLoading(false));
   }, []);
 
@@ -75,6 +83,25 @@ export default function SettingsPage() {
     }
   };
 
+  const handleSaveReminders = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setReminderSaving(true);
+    try {
+      await fetchWithAuth("/auth/reminder", {
+        method: "PATCH",
+        body: JSON.stringify({
+          reminderEnabled,
+          reminderTime,
+        }),
+      });
+      flash("Study reminder schedule updated! ⏰");
+    } catch (err: any) {
+      flash(err.message || "Reminder update failed", false);
+    } finally {
+      setReminderSaving(false);
+    }
+  };
+
   const toggleTheme = (t: "dark" | "light") => {
     setTheme(t);
     document.documentElement.classList.toggle("dark", t === "dark");
@@ -88,9 +115,10 @@ export default function SettingsPage() {
   );
 
   const navItems = [
-    { id: "profile",  label: "Profile",  icon: User },
-    { id: "security", label: "Security", icon: Lock },
-    { id: "theme",    label: "Appearance",icon: Moon },
+    { id: "profile",       label: "Profile",       icon: User },
+    { id: "notifications", label: "Notifications", icon: Bell },
+    { id: "security",      label: "Security",      icon: Lock },
+    { id: "theme",         label: "Appearance",    icon: Moon },
   ];
 
   return (
@@ -252,6 +280,108 @@ export default function SettingsPage() {
               <button className="bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive hover:text-white px-6 py-2.5 rounded-xl font-bold transition-all">
                 Update Password
               </button>
+            </div>
+          )}
+
+          {/* ── NOTIFICATIONS ── */}
+          {activeSection === "notifications" && (
+            <div className="space-y-6">
+              {/* Push permission trigger */}
+              <div className="bg-card border border-border rounded-2xl p-6 shadow-sm space-y-6">
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-primary" /> Browser Push Notifications
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Get real-time browser notifications for study alerts, game session invites, and activity logs.
+                </p>
+
+                <div className="flex items-center justify-between p-4 bg-secondary/30 border border-border rounded-xl">
+                  <div>
+                    <span className="text-xs font-bold text-muted-foreground uppercase block mb-1">
+                      Current System Status
+                    </span>
+                    <span className={`text-sm font-bold capitalize ${
+                      permission === "granted" ? "text-green-500" :
+                      permission === "denied" ? "text-destructive" : "text-amber-500"
+                    }`}>
+                      {permission === "granted" ? "Active (Permission Granted) 🔔" :
+                       permission === "denied" ? "Blocked (Permission Denied) ❌" : "Not Enabled (Default) ⚠️"}
+                    </span>
+                  </div>
+
+                  {permission !== "granted" ? (
+                    <button
+                      onClick={requestNotificationPermission}
+                      className="bg-primary text-primary-foreground px-5 py-2 rounded-xl font-bold hover:bg-primary/90 transition-all text-sm"
+                    >
+                      Enable Browser Alerts
+                    </button>
+                  ) : (
+                    <button
+                      onClick={triggerSimulation}
+                      className="bg-secondary text-foreground border border-border px-5 py-2 rounded-xl font-bold hover:bg-secondary/80 transition-all text-sm flex items-center gap-2"
+                    >
+                      🧪 Run Diagnostics Test
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Learning Reminders settings */}
+              <form onSubmit={handleSaveReminders} className="bg-card border border-border rounded-2xl p-6 shadow-sm space-y-6">
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-primary" /> Daily Learning Scheduler
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Configure dynamic automated emails and push reminders to stay disciplined with your daily goals.
+                </p>
+
+                <div className="space-y-4">
+                  {/* Enable Schedule Toggle */}
+                  <label className="flex items-center gap-3 cursor-pointer p-4 bg-secondary/20 border border-border rounded-xl hover:bg-secondary/40 transition-all">
+                    <input
+                      type="checkbox"
+                      checked={reminderEnabled}
+                      onChange={(e) => setReminderEnabled(e.target.checked)}
+                      className="w-5 h-5 rounded border-border text-primary focus:ring-primary/50 cursor-pointer"
+                    />
+                    <div>
+                      <span className="font-bold text-sm block">Enable Daily Study Reminder Alarms</span>
+                      <span className="text-xs text-muted-foreground">Automatically send reminders at your selected study time.</span>
+                    </div>
+                  </label>
+
+                  {/* Time picker */}
+                  {reminderEnabled && (
+                    <div className="space-y-2 max-w-xs animate-in slide-in-from-top-2 duration-300">
+                      <label className="text-xs font-bold text-muted-foreground uppercase">Target Learning Time (24h)</label>
+                      <input
+                        type="time"
+                        value={reminderTime}
+                        onChange={(e) => setReminderTime(e.target.value)}
+                        required
+                        className="w-full bg-background border border-border rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-border">
+                  {saveMsg.text && (
+                    <span className={`text-sm font-bold ${saveMsg.ok ? "text-green-500" : "text-destructive"}`}>
+                      {saveMsg.text}
+                    </span>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={reminderSaving}
+                    className="ml-auto bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all flex items-center gap-2 disabled:opacity-70"
+                  >
+                    {reminderSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    {reminderSaving ? "Saving Settings..." : "Save Scheduler Settings"}
+                  </button>
+                </div>
+              </form>
             </div>
           )}
 
