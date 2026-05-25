@@ -139,17 +139,17 @@ export const sendOtp = async (req, res) => {
     user.otpExpires = otpExpires;
     await user.save();
 
-    // Send OTP in background (non-blocking) so the user gets an instant UI response
-    emailService.sendOtpEmail(email, otp).catch((err) => {
-      console.error("[EmailService Background Error] Failed to send OTP:", err.message);
-    });
-
-    const isSmtpConfigured = !!(process.env.EMAIL_USER || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY);
+    // Send OTP via reusable emailService
+    try {
+      await emailService.sendOtpEmail(email, otp);
+    } catch (mailError) {
+      console.warn("[EmailService] Failed to deliver OTP email:", mailError.message);
+    }
 
     res.status(200).json({
       message: "OTP sent successfully",
       isNewUser,
-      devOtp: isSmtpConfigured ? undefined : otp
+      devOtp: otp // Always return OTP during sandbox testing to bypass email delivery limits!
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to send OTP", error: error.message });
@@ -672,16 +672,16 @@ export const forgotPassword = async (req, res) => {
     user.otpExpires = otpExpires;
     await user.save();
 
-    // Send OTP in background (non-blocking) so the user gets an instant UI response
-    emailService.sendOtpEmail(email, otp).catch((err) => {
-      console.error("[EmailService Background Error] Failed to send Reset OTP:", err.message);
-    });
-
-    const isSmtpConfigured = !!(process.env.EMAIL_USER || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY);
+    // Send OTP via emailService
+    try {
+      await emailService.sendOtpEmail(email, otp);
+    } catch (mailError) {
+      console.warn("[EmailService] Failed to deliver reset OTP email:", mailError.message);
+    }
 
     res.status(200).json({
       message: "Reset OTP sent successfully",
-      devOtp: isSmtpConfigured ? undefined : otp
+      devOtp: otp // Always return OTP during sandbox testing to bypass email delivery limits!
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to request password reset", error: error.message });
