@@ -146,10 +146,12 @@ export const sendOtp = async (req, res) => {
       console.warn("[EmailService] Failed to deliver OTP email:", mailError.message);
     }
 
+    const isSmtpConfigured = !!(process.env.EMAIL_USER || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY);
+
     res.status(200).json({
       message: "OTP sent successfully",
       isNewUser,
-      devOtp: otp // Always return OTP during sandbox testing to bypass email delivery limits!
+      devOtp: isSmtpConfigured ? undefined : otp
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to send OTP", error: error.message });
@@ -679,9 +681,11 @@ export const forgotPassword = async (req, res) => {
       console.warn("[EmailService] Failed to deliver reset OTP email:", mailError.message);
     }
 
+    const isSmtpConfigured = !!(process.env.EMAIL_USER || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY);
+
     res.status(200).json({
       message: "Reset OTP sent successfully",
-      devOtp: otp // Always return OTP during sandbox testing to bypass email delivery limits!
+      devOtp: isSmtpConfigured ? undefined : otp
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to request password reset", error: error.message });
