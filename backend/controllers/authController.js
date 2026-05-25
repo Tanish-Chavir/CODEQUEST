@@ -139,8 +139,10 @@ export const sendOtp = async (req, res) => {
     user.otpExpires = otpExpires;
     await user.save();
 
-    // Send OTP via reusable emailService
-    await emailService.sendOtpEmail(email, otp);
+    // Send OTP in background (non-blocking) so the user gets an instant UI response
+    emailService.sendOtpEmail(email, otp).catch((err) => {
+      console.error("[EmailService Background Error] Failed to send OTP:", err.message);
+    });
 
     const isSmtpConfigured = !!(process.env.EMAIL_USER || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY);
 
@@ -670,8 +672,10 @@ export const forgotPassword = async (req, res) => {
     user.otpExpires = otpExpires;
     await user.save();
 
-    // Send OTP via emailService
-    await emailService.sendOtpEmail(email, otp);
+    // Send OTP in background (non-blocking) so the user gets an instant UI response
+    emailService.sendOtpEmail(email, otp).catch((err) => {
+      console.error("[EmailService Background Error] Failed to send Reset OTP:", err.message);
+    });
 
     const isSmtpConfigured = !!(process.env.EMAIL_USER || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY);
 
